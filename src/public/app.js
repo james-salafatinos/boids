@@ -197,11 +197,9 @@ function init() {
   terrain.create();
   console.log(terrain);
 
-
   Boids = new BoidsGenerator(scene);
-  Boids.create()
-  console.log(Boids)
-
+  Boids.create();
+  console.log(Boids);
 
   updatePositionForCamera = function (camera, myObject3D) {
     // fixed distance from camera to the object
