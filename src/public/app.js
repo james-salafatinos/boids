@@ -4,6 +4,7 @@ import Stats from "/modules/stats.module.js";
 //Internal Libraries
 import { NoClipControls } from "/utils/NoClipControls.js";
 import { TerrainGenerator } from "/utils/TerrainGenerator.js";
+import { BoidsGenerator } from "/utils/BoidsGenerator.js";
 //CDN
 // import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 import { io } from "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.esm.min.js";
@@ -42,6 +43,7 @@ container = document.getElementById("container");
 let player;
 let players = [];
 let otherPlayer;
+let Boids;
 
 let MAP = new THREE.TextureLoader();
 init();
@@ -195,6 +197,12 @@ function init() {
   terrain.create();
   console.log(terrain);
 
+
+  Boids = new BoidsGenerator(scene);
+  Boids.create()
+  console.log(Boids)
+
+
   updatePositionForCamera = function (camera, myObject3D) {
     // fixed distance from camera to the object
     var dist = 100;
@@ -222,6 +230,7 @@ function animate() {
 
   if (frameIndex % 3 == 0) {
     MultiplayerGameInterfaceHandler.updatePlayerState();
+    Boids.update();
     MultiplayerSubsystemClientHandler.emit(
       "PlayerState",
       MultiplayerGameInterfaceHandler.playerState
