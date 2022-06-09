@@ -5,12 +5,16 @@ class Boids {
     this.scene = scene;
     this.mesh;
     this.pos = new THREE.Vector3(
-      Math.random() * 250,
-      Math.random() * 250,
-      Math.random() * 250
+      (Math.random() * 250)- 125,
+      (Math.random() * 250) -125,
+      (Math.random() * 250) - 125
     );
-    this.velocity = new THREE.Vector3();
-    this.acceleration = new THREE.Vector3(0.01, 0.01, 0.01);
+    this.velocity = new THREE.Vector3(
+      2* Math.random() -1,
+      2* Math.random() -1,
+      2* Math.random() -1
+    );
+    this.acceleration = new THREE.Vector3(0, 0, 0);
   }
   create() {
     // console.log("Creating!");
@@ -58,6 +62,17 @@ class Boids {
     this.mesh.position.x = this.pos.x;
     this.mesh.position.y = this.pos.y;
     this.mesh.position.z = this.pos.z;
+  }
+
+  _calculateAlignmentForce(listOfBoids) {
+    let sumOfVelocities = new THREE.Vector3(0,0,0);
+    for (let i = 0; i< listOfBoids.length; i++){
+      sumOfVelocities.add(listOfBoids[i].velocity.clone());
+    }
+    sumOfVelocities.normalize()
+    let m = (1- sumOfVelocities.dot((this.velocity.clone().normalize())));
+    //magnitude is 0 when aligned, 1 when orthogonal, 2 when opposite directions
+    return sumOfVelocities.multiplyScalar(m);
   }
 }
 

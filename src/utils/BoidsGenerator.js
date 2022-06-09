@@ -20,14 +20,19 @@ class BoidsGenerator {
   }
 
   update() {
-    console.log("Updating!");
-    let constant_force = new THREE.Vector3(0.01, 0.01, 0.01);
     for (let i = 0; i < this.boidsObjects.length; i++) {
-      this.boidsObjects[i]._applyForce(constant_force);
+      let alignment_force = this.boidsObjects[i]._calculateAlignmentForce(this.boidsObjects);
+      //let separation_force = new THREE.Vector3(0.00, 0.00, 0.00);
+      //let cohesion_force = new THREE.Vector3(0.00, 0.00, 0.00);
+      this.boidsObjects[i]._applyForce(alignment_force);
+      //this.boidsObjects[i]._applyForce(separation_force);
+      //this.boidsObjects[i]._applyForce(cohesion_force);
       this.boidsObjects[i]._updatePhysics();
       this.boidsObjects[i]._updateMesh();
     }
   }
+
+
 }
 
 export { BoidsGenerator };
