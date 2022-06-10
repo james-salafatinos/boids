@@ -5,14 +5,14 @@ class Boids {
     this.scene = scene;
     this.mesh;
     this.pos = new THREE.Vector3(
-      (Math.random() * 250)- 125,
-      (Math.random() * 250) -125,
-      (Math.random() * 250) - 125
+      Math.random() * 75 - 12,
+      200 + Math.random() * 75 - 12,
+      Math.random() * 75 - 12
     );
     this.velocity = new THREE.Vector3(
-      2* Math.random() -1,
-      2* Math.random() -1,
-      2* Math.random() -1
+      0.01 * (2 * Math.random() - 1),
+      0.01 * (2 * Math.random() - 1),
+      0.01 * (2 * Math.random() - 1)
     );
     this.acceleration = new THREE.Vector3(0, 0, 0);
   }
@@ -20,10 +20,6 @@ class Boids {
     // console.log("Creating!");
 
     this.scene.add(this._createSphere(this.pos.x, this.pos.y, this.pos.z));
-  }
-
-  update() {
-    // console.log("Updating!");
   }
 
   // Mover applyForce
@@ -46,15 +42,13 @@ class Boids {
       side: THREE.DoubleSide,
       color: new THREE.Color(0, 0, 0),
     });
-    let geo = new THREE.IcosahedronGeometry(20, 5);
+    let geo = new THREE.IcosahedronGeometry(5, 5);
     let mesh = new THREE.Mesh(geo, mat);
     mesh.castShadow = true;
     mesh.position.x = posx;
     mesh.position.y = posy;
     mesh.position.z = posz;
     this.mesh = mesh;
-    // mesh.geometry.scale(4, 4, 4);
-    // this.boidsObjects.push(mesh);
 
     return mesh;
   }
@@ -65,14 +59,38 @@ class Boids {
   }
 
   _calculateAlignmentForce(listOfBoids) {
-    let sumOfVelocities = new THREE.Vector3(0,0,0);
-    for (let i = 0; i< listOfBoids.length; i++){
+    let sumOfVelocities = new THREE.Vector3(0, 0, 0);
+    for (let i = 0; i < listOfBoids.length; i++) {
       sumOfVelocities.add(listOfBoids[i].velocity.clone());
     }
-    sumOfVelocities.normalize()
-    let m = (1- sumOfVelocities.dot((this.velocity.clone().normalize())));
+    sumOfVelocities.normalize();
+    let m = 1 - sumOfVelocities.dot(this.velocity.clone().normalize());
     //magnitude is 0 when aligned, 1 when orthogonal, 2 when opposite directions
-    return sumOfVelocities.multiplyScalar(m);
+    sumOfVelocities.multiplyScalar(m);
+    return sumOfVelocities.multiplyScalar(0.01);
+  }
+
+  _calculateSeparationForce(listOfBoids) {
+    let force = new THREE.Vector3(0, 0, 0);
+    let epsilon = 0.00000001;
+    for (let i = 0; i < listOfBoids.length; i++) {
+      let dir = this.pos.clone().sub(listOfBoids[i].pos.clone()).normalize();
+      let distance =
+        this.pos.clone().distanceTo(listOfBoids[i].pos.clone()) + epsilon;
+      force.add(dir.multiplyScalar(1 / distance));
+    }
+    return force.multiplyScalar(0.5);
+  }
+
+  _calculateCohesionForce(listOfBoids) {
+    let force = new THREE.Vector3(0, 0, 0);
+    for (let i = 0; i < listOfBoids.length; i++) {
+      let dir = this.pos.clone().sub(listOfBoids[i].pos.clone()).normalize();
+      let distance = this.pos.clone().distanceTo(listOfBoids[i].pos.clone());
+
+      force.add(dir.multiplyScalar(-1 * distance));
+    }
+    return force.multiplyScalar(0.0001);
   }
 }
 
