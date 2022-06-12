@@ -7,6 +7,7 @@ class BoidsGenerator {
     this.boidsObjects = [];
   }
   create() {
+    //Comment
     console.log("Creating!");
 
     for (let i = 0; i < this.numBoids; i++) {

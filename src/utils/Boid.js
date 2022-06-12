@@ -83,6 +83,7 @@ class Boids {
   }
 
   _calculateCohesionForce(listOfBoids) {
+    //Comment
     let force = new THREE.Vector3(0, 0, 0);
     for (let i = 0; i < listOfBoids.length; i++) {
       let dir = this.pos.clone().sub(listOfBoids[i].pos.clone()).normalize();
